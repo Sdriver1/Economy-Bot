@@ -14,22 +14,31 @@ module.exports = {
     const userId = message.author.id;
     const serverId = message.guild.id;
 
+    const coinName = getCoinName();
+    const coinEmote = getCoinEmote();
+
+    const maxBet = 50000; 
+    const balance = getUserBalance(userId, serverId);
+
     if (!args[0] || isNaN(Number(args[0]))) {
       return message.reply("Usage: `.blackjack <amount>`");
     }
 
-    const coinName = getCoinName();
-    const coinEmote = getCoinEmote();
-    const amount = parseInt(args[0], 10);
+    const wager = parseInt(args[0], 10);
 
-    if (amount <= 0) {
-      return message.reply("@slient The wager amount must be greater than 0.");
+    if (wager <= 0) {
+      return message.reply("The wager amount must be greater than 0.");
     }
 
-    const balance = getUserBalance(userId, serverId);
-    if (balance < amount) {
+    if (wager > maxBet) {
       return message.reply(
-        `@slient You don't have enough ${coinEmote} ${coinName} to make this bet.`
+        `The maximum wager for blackjack is **${maxBet.toLocaleString()} coins**.`
+      );
+    }
+
+    if (balance < wager) {
+      return message.reply(
+        `You don't have enough coins to wager **${wager.toLocaleString()} coins**.`
       );
     }
 
@@ -53,7 +62,7 @@ module.exports = {
     let dealerValue = calculateHandValue(dealerHand);
 
     await message.reply(
-      `@slient Your hand: **${playerHand.join(
+      `Your hand: **${playerHand.join(
         ", "
       )}** (Total: **${playerValue}**) \n` +
         `Dealer's visible card: **${dealerHand[0]}**`
@@ -61,7 +70,7 @@ module.exports = {
 
     while (playerValue < 21) {
       await message.reply(
-        " @slient Type `hit` to draw another card or `stand` to hold your hand."
+        "Type `hit` to draw another card or `stand` to hold your hand."
       );
 
       const filter = (response: any) =>
@@ -82,16 +91,16 @@ module.exports = {
         playerHand.push(newCard);
         playerValue = calculateHandValue(playerHand);
         await message.reply(
-          `@slient You drew a **${newCard}**. Your hand: **${playerHand.join(
+          `You drew a **${newCard}**. Your hand: **${playerHand.join(
             ", "
           )}** (Total: **${playerValue}**)`
         );
 
         if (playerValue > 21) {
           recordBlackjack(userId, serverId, "loss_bust");
-          updateUserBalance(userId, serverId, -amount);
+          updateUserBalance(userId, serverId, -wager);
           return message.reply(
-            `@slient You busted with a score of **${playerValue}**. You lost **${amount} ${coinEmote} ${coinName}**.`
+            `You busted with a score of **${playerValue}**. You lost **${wager} ${coinEmote} ${coinName}**.`
           );
         }
       } else if (action === "stand") {
@@ -100,7 +109,7 @@ module.exports = {
     }
 
     await message.reply(
-      `@slient Dealer's hand: **${dealerHand.join(
+      `Dealer's hand: **${dealerHand.join(
         ", "
       )}** (Total: **${dealerValue}**)`
     );
@@ -110,7 +119,7 @@ module.exports = {
       dealerHand.push(newCard);
       dealerValue = calculateHandValue(dealerHand);
       await message.reply(
-        `@slient Dealer drew a **${newCard}**. Dealer's hand: **${dealerHand.join(
+        `Dealer drew a **${newCard}**. Dealer's hand: **${dealerHand.join(
           ", "
         )}** (Total: **${dealerValue}**)`
       );
@@ -118,20 +127,20 @@ module.exports = {
 
     if (dealerValue > 21 || playerValue > dealerValue) {
       recordBlackjack(userId, serverId, "win");
-      updateUserBalance(userId, serverId, amount);
+      updateUserBalance(userId, serverId, wager);
       return message.reply(
-        `@slient You won with a score of **${playerValue}**! Dealer scored **${dealerValue}**. You gained **${amount} ${coinEmote} ${coinName}**.`
+        `You won with a score of **${playerValue}**! Dealer scored **${dealerValue}**. You gained **${wager} ${coinEmote} ${coinName}**.`
       );
     } else if (dealerValue > playerValue) {
       recordBlackjack(userId, serverId, "loss_house");
-      updateUserBalance(userId, serverId, -amount);
+      updateUserBalance(userId, serverId, -wager);
       return message.reply(
-        `@slient You lost. Dealer: **${dealerValue}**, You: **${playerValue}**. Lost **${amount} ${coinEmote} ${coinName}**.`
+        `You lost. Dealer: **${dealerValue}**, You: **${playerValue}**. Lost **${wager} ${coinEmote} ${coinName}**.`
       );
     } else {
       recordBlackjack(userId, serverId, "draw");
       return message.reply(
-        `@slient It's a tie! Both you and the dealer scored **${playerValue}**. Your wager is returned.`
+        `It's a tie! Both you and the dealer scored **${playerValue}**. Your wager is returned.`
       );
     }
   },

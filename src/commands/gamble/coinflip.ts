@@ -17,6 +17,7 @@ module.exports = {
     const coinName = getCoinName();
     const coinEmote = getCoinEmote();
 
+    const maxBet = 25000;
     if (!args[0] || !["h", "t"].includes(args[0].toLowerCase())) {
       return message.reply("Usage: `.coinflip <h/t> <amount>`");
     }
@@ -26,6 +27,12 @@ module.exports = {
 
     const choice = args[0].toLowerCase() === "h" ? "heads" : "tails";
     const amount = parseInt(args[1], 10);
+
+    if (amount > maxBet) {
+      return message.reply(
+        `The maximum wager amount is ${maxBet.toLocaleString()} ${coinEmote} ${coinName}.`
+      );
+    }
 
     if (amount <= 0) {
       return message.reply("The wager amount must be greater than 0.");
