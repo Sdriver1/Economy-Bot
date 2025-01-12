@@ -34,9 +34,9 @@ module.exports = {
         topUsers
           .map(
             (user: any, index: number) =>
-              `**#${index + 1}** <@${user.id}>: **${
-                user.balance
-              } ${coinEmote} ${coinName}**`
+              `**#${index + 1}** <@${
+                user.id
+              }>: **${user.balance.toLocaleString()} ${coinEmote} ${coinName}**`
           )
           .join("\n")
       )

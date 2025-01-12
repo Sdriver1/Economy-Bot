@@ -45,12 +45,12 @@ module.exports = {
       const winnings = amount * 2;
       updateUserBalance(userId, serverId, winnings);
       return message.reply(
-        `You won! The coin landed on **${outcome}**. You gained **${winnings} ${coinEmote} ${coinName}**.`
+        `You won! The coin landed on **${outcome}**. You gained **${winnings.toLocaleString()} ${coinEmote} ${coinName}**.`
       );
     } else {
       updateUserBalance(userId, serverId, -amount);
       return message.reply(
-        `You lost! The coin landed on **${outcome}**. You lost **${amount} ${coinEmote} ${coinName}**.`
+        `You lost! The coin landed on **${outcome}**. You lost **${amount.toLocaleString()} ${coinEmote} ${coinName}**.`
       );
     }
   },

@@ -65,22 +65,26 @@ client.once("ready", async () => {
   setInterval(setDynamicActivity, 10000);
 });
 
-async function getTotalMoney(serverId: string): Promise<number> {
+async function getTotalMoney(serverId: string): Promise<string> {
   const result = db
     .prepare("SELECT SUM(balance) AS total FROM users WHERE server_id = ?")
     .get(serverId) as { total: number } | undefined;
 
-  return result?.total || 0;
+  const total = result?.total || 0;
+
+  return total.toLocaleString();
 }
 
-async function getUserCountWithMoney(serverId: string): Promise<number> {
+async function getUserCountWithMoney(serverId: string): Promise<string> {
   const result = db
     .prepare(
       "SELECT COUNT(*) AS count FROM users WHERE server_id = ? AND balance > 0"
     )
     .get(serverId) as { count: number } | undefined;
 
-  return result?.count || 0;
+  const count = result?.count || 0;
+
+  return count.toLocaleString();
 }
 
 client.on("messageCreate", async (message) => {

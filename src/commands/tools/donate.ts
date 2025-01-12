@@ -45,7 +45,7 @@ module.exports = {
     updateUserBalance(recipient.id, serverId, amount);
 
     message.reply(
-      `You have successfully donated **${amount} ${coinEmote} ${coinName}** to ${recipient.tag}.`
+      `You have successfully donated **${amount.toLocaleString()} ${coinEmote} ${coinName}** to ${recipient.tag}.`
     );
   },
 };

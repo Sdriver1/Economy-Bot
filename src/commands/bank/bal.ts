@@ -33,7 +33,7 @@ module.exports = {
       .addFields(
         {
           name: "Balance",
-          value: `${balance} ${coinEmote} ${coinName}`,
+          value: `${balance.toLocaleString()} ${coinEmote} ${coinName}`,
           inline: true,
         },
         { name: "Ranking", value: `#${rank}`, inline: true }

@@ -63,7 +63,7 @@ module.exports = {
         {
           name: "User Stats",
           value: `
-          **Balance**: ${userBalance} ${coinEmote} ${coinName}
+          **Balance**: ${userBalance.toLocaleString()} ${coinEmote} ${coinName}
           **Coinflip Stats**: Heads - ${
             userCoinflipStats?.heads || 0
           }, Tails - ${userCoinflipStats?.tails || 0}
@@ -79,10 +79,16 @@ module.exports = {
         {
           name: "Server Stats",
           value: `
-          **Server Bank**: ${serverBank} ${coinEmote} ${coinName}
-          **Total Users**: ${totalUsers}
-          **Coinflip Stats**: Heads - ${serverCoinflipStats.heads}, Tails - ${serverCoinflipStats.tails}
-          **Blackjack Stats**: Wins - ${serverBlackjackStats.wins}, Losses (Bust) - ${serverBlackjackStats.lossesBust}, Losses (House) - ${serverBlackjackStats.lossesHouse}
+          **Server Bank**: ${serverBank.toLocaleString()} ${coinEmote} ${coinName}
+          **Total Users**: ${totalUsers.toLocaleString()}
+          **Coinflip Stats**: Heads - ${serverCoinflipStats.heads}, Tails - ${
+            serverCoinflipStats.tails
+          }
+          **Blackjack Stats**: Wins - ${
+            serverBlackjackStats.wins
+          }, Losses (Bust) - ${
+            serverBlackjackStats.lossesBust
+          }, Losses (House) - ${serverBlackjackStats.lossesHouse}
           `,
         }
       )
