@@ -16,11 +16,17 @@ module.exports = {
 
     const coinName = getCoinName();
     const coinEmote = getCoinEmote();
-    if (!args[0] || isNaN(Number(args[0]))) {
-      return message.reply("Usage: `.coinflip <amount>`");
+
+    if (!args[0] || !["h", "t"].includes(args[0].toLowerCase())) {
+      return message.reply("Usage: `.coinflip <h/t> <amount>`");
+    }
+    if (!args[1] || isNaN(Number(args[1]))) {
+      return message.reply("You must specify a valid wager amount.");
     }
 
-    const amount = parseInt(args[0], 10);
+    const choice = args[0].toLowerCase() === "h" ? "heads" : "tails";
+    const amount = parseInt(args[1], 10);
+
     if (amount <= 0) {
       return message.reply("The wager amount must be greater than 0.");
     }
@@ -31,14 +37,15 @@ module.exports = {
     }
 
     const outcome = Math.random() < 0.5 ? "heads" : "tails";
-    const win = Math.random() < 0.5;
+    const win = outcome === choice;
 
     recordCoinflip(userId, serverId, outcome);
 
     if (win) {
-      updateUserBalance(userId, serverId, amount);
+      const winnings = amount * 2;
+      updateUserBalance(userId, serverId, winnings);
       return message.reply(
-        `You won! The coin landed on **${outcome}**. You gained **${amount} ${coinEmote} ${coinName}**.`
+        `You won! The coin landed on **${outcome}**. You gained **${winnings} ${coinEmote} ${coinName}**.`
       );
     } else {
       updateUserBalance(userId, serverId, -amount);
