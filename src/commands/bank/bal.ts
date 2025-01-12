@@ -5,8 +5,13 @@ module.exports = {
   name: "bal",
   aliases: ["balance", "b"],
   description: "Check your balance and server ranking.",
-  async execute(message: any) {
-    const userId = message.author.id;
+  async execute(message: any, args: string[]) {
+    const target =
+      message.mentions.users.first() ||
+      (args[0] && message.guild.members.cache.get(args[0])?.user) ||
+      message.author;
+
+    const userId = target.id;
     const serverId = message.guild.id;
 
     const balance = getUserBalance(userId, serverId);
@@ -29,7 +34,7 @@ module.exports = {
 
     const embed = new EmbedBuilder()
       .setColor("#FFD700")
-      .setTitle(`${message.author.username}'s Balance`)
+      .setTitle(`${target.username}'s Balance`)
       .addFields(
         {
           name: "Balance",
@@ -38,7 +43,7 @@ module.exports = {
         },
         { name: "Ranking", value: `#${rank}`, inline: true }
       )
-      .setThumbnail(message.author.displayAvatarURL({ dynamic: true }))
+      .setThumbnail(target.displayAvatarURL({ dynamic: true }))
       .setFooter({ text: `Server: ${message.guild.name}` });
 
     message.reply({ embeds: [embed] });
