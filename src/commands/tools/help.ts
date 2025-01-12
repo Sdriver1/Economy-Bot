@@ -10,18 +10,23 @@ module.exports = {
     const coinEmote = getCoinEmote();
     const commands = [
       { name: ".bal / .balance / .b", description: "Check your balance." },
-      { name: ".cf h/t <amount>", description: "Flip a coin and wager money." },
       { name: ".bj <amount>", description: "Play blackjack and wager money." },
-      { name: ".lot / .lottery <amount>", description: "Enter the lottery." },
-      {
-        name: ".lb / .leaderboard",
-        description: "Show the top 10 richest users.",
-      },
-      { name: ".stats", description: "Show user and server stats." },
+      { name: ".cf h/t <amount>", description: "Flip a coin and wager money." },
+      { name: ".daily", description: "Claim your daily coins." },
       {
         name: ".donate <user> <amount>",
         description: "Donate coins to another user.",
       },
+      {
+        name: ".help / .commands / .h",
+        description: "List all available commands.",
+      },
+      {
+        name: ".lb / .leaderboard",
+        description: "Show the top 10 richest users.",
+      },
+      { name: ".lot / .lottery <amount>", description: "Enter the lottery." },
+      { name: ".stats", description: "Show user and server stats." },
     ];
 
     const adminCommands = [

@@ -5,6 +5,7 @@ import {
   getServerBlackjackStats,
   getCoinName,
   getCoinEmote,
+  getDailyData,
 } from "../../database/db";
 
 module.exports = {
@@ -52,6 +53,9 @@ module.exports = {
         .prepare("SELECT COUNT(*) AS count FROM users WHERE server_id = ?")
         .get(serverId)?.count || 0;
 
+    const dailyData = getDailyData(userId, serverId);
+    const dailyStreak = dailyData.streak;
+
     const embed = new EmbedBuilder()
       .setColor("#1E90FF")
       .setTitle(`${message.author.username}'s Stats`)
@@ -68,6 +72,7 @@ module.exports = {
           }, Losses (Bust) - ${
             userCoinflipStats?.lossesBust || 0
           }, Losses (House) - ${userCoinflipStats?.lossesHouse || 0}
+          **Daily Streak**: ${dailyStreak} day(s)
           **Leaderboard Position**: #${userRank}
           `,
         },
