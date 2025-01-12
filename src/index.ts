@@ -44,10 +44,10 @@ client.once("ready", async () => {
 
   const activities = async () => [
     `Managing a total of ${await getTotalMoney(
-      "775071666953912371"
+      "1125796993688666203"
     )} coins! | .h for help`,
     `Watching over ${await getUserCountWithMoney(
-      "775071666953912371"
+      "1125796993688666203"
     )} wealthy users! | .h for help`,
   ];
 
