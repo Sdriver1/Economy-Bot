@@ -26,6 +26,8 @@ module.exports = {
         description: "Show the top 10 richest users.",
       },
       { name: ".lot / .lottery <amount>", description: "Enter the lottery." },
+      { name: ".rob / .r <user>", description: "Rob another user." },
+      { name: ".shop <buy/item> <item id>", description: "Buy items from the shop." },
       { name: ".stats", description: "Show user and server stats." },
     ];
 

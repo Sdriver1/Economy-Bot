@@ -52,14 +52,8 @@ module.exports = {
 
     if (args[0] === "status") {
       const pool = getLotteryPool(serverId);
-      const participantCount = db
-        .prepare(
-          "SELECT COUNT(*) AS count FROM lottery_entries WHERE server_id = ?"
-        )
-        .get(serverId) as { count: number } | undefined;
-
       return message.reply(
-        `Lottery pool: **${pool} ${coinEmote} ${coinName}** with **${participantCount} participant(s)**.`
+        `Lottery pool: **${pool} ${coinEmote} ${coinName}**.`
       );
     }
 

@@ -21,7 +21,7 @@ const client = new Client({
 
 const commands = new Collection<string, any>();
 
-const commandFolders = ["admin", "bank", "gamble", "tools"];
+const commandFolders = ["admin", "bank", "gamble", "stocks", "shop", "tools"];
 for (const folder of commandFolders) {
   const folderPath = path.resolve(__dirname, "commands", folder);
 
