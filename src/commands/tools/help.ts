@@ -27,7 +27,11 @@ module.exports = {
       },
       { name: ".lot / .lottery <amount>", description: "Enter the lottery." },
       { name: ".rob / .r <user>", description: "Rob another user." },
-      { name: ".shop <buy/item> <item id>", description: "Buy items from the shop." },
+      { name: ".rs / .robstatus", description: "Check your rob status." },
+      {
+        name: ".shop <buy/item> <item id>",
+        description: "Buy items from the shop.",
+      },
       { name: ".stats", description: "Show user and server stats." },
     ];
 
@@ -40,6 +44,10 @@ module.exports = {
       {
         name: ".give-money <user> <amount>",
         description: "Give coins to a user.",
+      },
+      {
+        name: "robprotection set/remove <user> <hours>",
+        description: "Manage rob protections for users.",
       },
       {
         name: ".set-balance <user> <amount>",

@@ -5,6 +5,7 @@ import {
   getCoinEmote,
   setUserInJail,
   isUserInJail,
+  hasRobProtection,
 } from "../../database/db";
 
 module.exports = {
@@ -14,6 +15,15 @@ module.exports = {
   async execute(message: any, args: string[]) {
     const userId = message.author.id;
     const serverId = message.guild.id;
+
+    const target = message.mentions.users.first();
+    if (!target || target.bot) {
+      return message.reply("You need to mention a valid user to rob!");
+    }
+    const targetId = target.id;
+    if (userId === targetId) {
+      return message.reply("You can't rob yourself!");
+    }
 
     const jailStatus = isUserInJail(userId, serverId);
     if (jailStatus.inJail) {
@@ -26,14 +36,11 @@ module.exports = {
       );
     }
 
-    const target = message.mentions.users.first();
-    if (!target || target.bot) {
-      return message.reply("You need to mention a valid user to rob!");
-    }
-
-    const targetId = target.id;
-    if (userId === targetId) {
-      return message.reply("You can't rob yourself!");
+    const isProtected = hasRobProtection(targetId, serverId);
+    if (isProtected) {
+      return message.reply(
+        `${target.username} has an active rob protection and cannot be robbed.`
+      );
     }
 
     const coinName = getCoinName();
@@ -70,9 +77,9 @@ module.exports = {
       const finalFine = Math.min(fineAmount, userBalance);
 
       await updateUserBalance(userId, serverId, -finalFine);
-      const jailChance = Math.random(); // 25-50% chance of jail
+      const jailChance = Math.random(); 
       if (jailChance >= 0.5) {
-        const jailDuration = Math.floor(Math.random() * 12 * 60 * 60 * 1000); // Up to 24 hours
+        const jailDuration = Math.floor(Math.random() * 12 * 60 * 60 * 1000); 
         const jailEndTime = Date.now() + jailDuration;
         setUserInJail(userId, serverId, jailEndTime);
 
