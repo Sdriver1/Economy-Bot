@@ -133,7 +133,7 @@ module.exports = {
 
         const currentProtection = hasRobProtection(userId, serverId)
           ? Math.ceil(
-              (getRobProtection(userId, serverId) - Date.now()) /
+              ((getRobProtection(userId, serverId) ?? 0) - Date.now()) /
                 (60 * 60 * 1000)
             )
           : 0;

@@ -8,11 +8,20 @@ module.exports = {
   execute(message: any) {
     const coinName = getCoinName();
     const coinEmote = getCoinEmote();
-    const commands = [
-      { name: ".bal / .balance / .b", description: "Check your balance." },
+
+    const games = [
       { name: ".bj <amount>", description: "Play blackjack and wager money." },
       { name: ".cf h/t <amount>", description: "Flip a coin and wager money." },
       { name: ".daily", description: "Claim your daily coins." },
+      { name: ".lot / .lottery <amount>", description: "Enter the lottery." },
+      { name: ".slots <amount>", description: "Play slots and wager money." },
+      {
+        name: ".guessdoor <amount>",
+        description: "Guess the door for a multiplier reward.",
+      },
+    ];
+
+    const tools = [
       {
         name: ".donate <user> <amount>",
         description: "Donate coins to another user.",
@@ -21,17 +30,20 @@ module.exports = {
         name: ".help / .commands / .h",
         description: "List all available commands.",
       },
-      {
-        name: ".lb / .leaderboard",
-        description: "Show the top 10 richest users.",
-      },
-      { name: ".lot / .lottery <amount>", description: "Enter the lottery." },
       { name: ".pick", description: "Pick up a coin drop." },
-      { name: ".rob / .r <user>", description: "Rob another user." },
       { name: ".rs / .robstatus", description: "Check your rob status." },
       {
         name: ".shop <buy/item> <item id>",
         description: "Buy items from the shop.",
+      },
+      { name: ".work", description: "Work to earn coins." },
+    ];
+
+    const stats = [
+      { name: ".bal / .balance / .b", description: "Check your balance." },
+      {
+        name: ".lb / .leaderboard",
+        description: "Show the top 10 richest users.",
       },
       { name: ".stats", description: "Show user and server stats." },
     ];
@@ -65,8 +77,20 @@ module.exports = {
       )
       .addFields(
         {
-          name: "Regular Commands",
-          value: commands
+          name: "Games",
+          value: games
+            .map((cmd) => `\`${cmd.name}\` - ${cmd.description}`)
+            .join("\n"),
+        },
+        {
+          name: "Tools",
+          value: tools
+            .map((cmd) => `\`${cmd.name}\` - ${cmd.description}`)
+            .join("\n"),
+        },
+        {
+          name: "Stats",
+          value: stats
             .map((cmd) => `\`${cmd.name}\` - ${cmd.description}`)
             .join("\n"),
         },
