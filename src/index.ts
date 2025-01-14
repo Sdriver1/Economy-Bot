@@ -8,6 +8,7 @@ import dotenv from "dotenv";
 import fs from "fs";
 import path from "path";
 import db from "./database/db";
+const initCoinDrops = require("./events/coindrop");
 
 dotenv.config();
 
@@ -21,7 +22,7 @@ const client = new Client({
 
 const commands = new Collection<string, any>();
 
-const commandFolders = ["admin", "bank", "gamble", "stocks", "shop", "tools"];
+const commandFolders = ["admin", "bank", "gamble", "chat", "shop", "tools"];
 for (const folder of commandFolders) {
   const folderPath = path.resolve(__dirname, "commands", folder);
 
@@ -41,6 +42,7 @@ for (const folder of commandFolders) {
 
 client.once("ready", async () => {
   console.log(`Logged in as ${client.user?.tag}!`);
+  initCoinDrops.init(client);
 
   const activities = async () => [
     `Managing a total of ${await getTotalMoney(
