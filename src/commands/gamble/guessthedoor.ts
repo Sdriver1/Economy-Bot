@@ -5,6 +5,8 @@ import {
   getCoinEmote,
 } from "../../database/db";
 
+const activeGames: { [userId: string]: boolean } = {};
+
 module.exports = {
   name: "guessdoor",
   aliases: ["door", "gd"],
@@ -13,6 +15,12 @@ module.exports = {
     const userId = message.author.id;
     const serverId = message.guild.id;
     const coinEmote = getCoinEmote();
+
+    if (activeGames[userId]) {
+      return message.reply(
+        "You already have an active game. Please finish it before starting a new one!"
+      );
+    }
 
     const wager = parseInt(args[0], 10);
     if (!wager || wager <= 0) {
@@ -32,7 +40,14 @@ module.exports = {
     }
 
     const multipliers = [
-      10, 5, 3, 2, 1.5, 1.5, 1.0, 1.0, 0.5, 0.5, 0.5, 0, 0, 0,
+      10, // 5% chance
+      5, // 5% chance
+      3, 3, // 10% chance
+      2, 2, // 10% chance
+      1.5, 1.5, // 10% chance
+      1.0, 1.0, 1.0, 1.0, // 20% chance
+      0.5, 0.5, 0.5, 0.5, // 20% chance
+      0, 0, 0, 0, // 20% chance
     ];
     const shuffled = multipliers.sort(() => Math.random() - 0.5);
     const doorMap: { [key: number]: number } = {
@@ -55,12 +70,15 @@ module.exports = {
 
     await message.reply({ embeds: [embed] });
 
+    activeGames[userId] = true;
+
     const filter = (msg: any) =>
-      msg.author.id === message.author.id &&
-      ["1", "2", "3"].includes(msg.content.trim());
+      msg.author.id === userId && ["1", "2", "3"].includes(msg.content.trim());
     const collected = await message.channel
       .awaitMessages({ filter, max: 1, time: 30000, errors: ["time"] })
       .catch(() => null);
+
+    delete activeGames[userId];
 
     if (!collected || !collected.first()) {
       return message.reply("You took too long to choose a door! Try again.");
