@@ -11,14 +11,21 @@ module.exports = {
 
     const robProtection = getRobProtection(userId, serverId);
 
+    if (!robProtection) {
+      message.reply(
+        "You do not have rob protection. \nYou can get some from the shop (`.shop buy 4 <time>`)."
+      );
+      return;
+    }
+
+    const expirationTimestamp = Math.floor(robProtection / 1000); 
+
     const embed = new EmbedBuilder()
       .setColor("#FFD700")
       .setTitle("Rob Status")
       .setDescription(
         robProtection
-          ? `Your rob protection will expire at <t:${Math.floor(
-              robProtection / 1000
-            )}:F> or <t:${Math.floor(robProtection / 1000)}:R>.`
+          ? `Your rob protection will expire at <t:${expirationTimestamp}:F> or <t:${expirationTimestamp}:R>.`
           : "You do not have rob protection. You can get some from the shop (.shop buy 4 <time>)."
       );
 
