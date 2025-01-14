@@ -18,7 +18,6 @@ module.exports = {
 
     const balance = getUserBalance(userId, serverId);
 
-    // Pre-defined shop items
     const shopItems = [
       {
         id: 1,
@@ -54,7 +53,6 @@ module.exports = {
       },
     ];
 
-    // View full shop
     if (!args[0]) {
       const shopEmbed = new EmbedBuilder()
         .setTitle("🌸 Shop")
@@ -74,7 +72,6 @@ module.exports = {
       return message.reply({ embeds: [shopEmbed] });
     }
 
-    // Inspect an item
     if (args[0].toLowerCase() === "item") {
       const itemId = parseInt(args[1], 10);
       const item = shopItems.find((i) => i.id === itemId);
@@ -109,7 +106,6 @@ module.exports = {
       return message.reply({ embeds: [itemEmbed] });
     }
 
-    // Buy an item
     if (args[0].toLowerCase() === "buy") {
       const itemId = parseInt(args[1], 10);
       const item = shopItems.find((i) => i.id === itemId);
@@ -126,7 +122,6 @@ module.exports = {
         );
       }
 
-      // Handle Rob Protection logic
       if (item.name === "Rob Protection") {
         const quantity = parseInt(args[2], 10) || 1;
 
@@ -137,12 +132,12 @@ module.exports = {
         }
 
         const currentProtection = hasRobProtection(userId, serverId)
-          ? Math.floor(
+          ? Math.ceil(
               (getRobProtection(userId, serverId) - Date.now()) /
                 (60 * 60 * 1000)
             )
           : 0;
-        const maxDuration = 12; // Maximum 12 hours
+        const maxDuration = 12; 
 
         if (currentProtection >= maxDuration) {
           return message.reply(
@@ -168,7 +163,7 @@ module.exports = {
             .awaitMessages({
               filter,
               max: 1,
-              time: 30000, // 30 seconds timeout
+              time: 300000, 
               errors: ["time"],
             })
             .catch(() => {
@@ -182,7 +177,7 @@ module.exports = {
           }
 
           if (reply === "yes") {
-            addRobProtection(userId, serverId, remainingHours * 60 * 60 * 1000); // Add the new hours
+            addRobProtection(userId, serverId, remainingHours * 60 * 60 * 1000); 
             updateUserBalance(userId, serverId, -adjustedCost);
             recordPurchase(userId, serverId, item.name);
 
@@ -198,7 +193,7 @@ module.exports = {
         const newDuration = Math.min(currentProtection + quantity, maxDuration);
         const addedHours = newDuration - currentProtection;
 
-        addRobProtection(userId, serverId, addedHours * 60 * 60 * 1000); // Add the new hours
+        addRobProtection(userId, serverId, addedHours * 60 * 60 * 1000); 
         updateUserBalance(userId, serverId, -totalCost);
         recordPurchase(userId, serverId, item.name);
 
@@ -209,7 +204,6 @@ module.exports = {
         );
       }
 
-      // Ask for confirmation for other items
       const confirmationMessage = await message.reply(
         `Are you sure you want to purchase **${
           item.name
@@ -227,7 +221,7 @@ module.exports = {
         .awaitMessages({
           filter,
           max: 1,
-          time: 30000, // 30 seconds timeout
+          time: 300000,
           errors: ["time"],
         })
         .catch(() => {
@@ -241,7 +235,6 @@ module.exports = {
       }
 
       if (reply === "yes") {
-        // Handle role purchases
         if (item.type === "role") {
           const member = message.member as GuildMember;
           const role = message.guild.roles.cache.get(item.roleId);
@@ -255,10 +248,7 @@ module.exports = {
           await member.roles.add(role);
         }
 
-        // Add the item to inventory
         addItemToInventory(userId, serverId, item.name);
-
-        // Deduct the balance and record the purchase
         updateUserBalance(userId, serverId, -item.price);
         recordPurchase(userId, serverId, item.name);
 
