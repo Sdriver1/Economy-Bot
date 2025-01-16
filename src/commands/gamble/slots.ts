@@ -14,7 +14,7 @@ module.exports = {
       return message.reply("Please provide a valid bet amount!");
     }
 
-    const maxBet = 20000;
+    const maxBet = 50000;
     if (bet > maxBet) {
       return message.reply(`The maximum bet amount is ${maxBet} coins!`);
     }

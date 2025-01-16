@@ -17,7 +17,7 @@ module.exports = {
     const coinName = getCoinName();
     const coinEmote = getCoinEmote();
 
-    const maxBet = 25000;
+    const maxBet = 30000;
     if (!args[0] || !["h", "t"].includes(args[0].toLowerCase())) {
       return message.reply("Usage: `.coinflip <h/t> <amount>`");
     }

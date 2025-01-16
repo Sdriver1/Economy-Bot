@@ -17,7 +17,7 @@ module.exports = {
     const coinName = getCoinName();
     const coinEmote = getCoinEmote();
 
-    const maxBet = 50000; 
+    const maxBet = 35000; 
     const balance = getUserBalance(userId, serverId);
 
     if (!args[0] || isNaN(Number(args[0]))) {

@@ -32,7 +32,7 @@ module.exports = {
       return message.reply("You don't have enough coins to make that wager.");
     }
 
-    const maxWager = 20000;
+    const maxWager = 15000;
     if (wager > maxWager) {
       return message.reply(
         `The maximum wager is **${maxWager.toLocaleString()} ${coinEmote}**.`
