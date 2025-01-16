@@ -9,6 +9,7 @@ import fs from "fs";
 import path from "path";
 import db from "./database/db";
 const initCoinDrops = require("./events/coindrop");
+import { addBlacklist, isBlacklisted } from "./database/db";
 
 dotenv.config();
 
@@ -19,6 +20,9 @@ const client = new Client({
     GatewayIntentBits.MessageContent,
   ],
 });
+
+const messageCache = new Map();
+const warnedUsers = new Set();
 
 const commands = new Collection<string, any>();
 
@@ -90,24 +94,83 @@ async function getUserCountWithMoney(serverId: string): Promise<string> {
 }
 
 client.on("messageCreate", async (message) => {
-  if (!message.content.startsWith(".") || message.author.bot) return;
+  if (!message.guild || message.author.bot) return;
 
-  const args = message.content.slice(1).trim().split(/ +/);
-  const commandName = args.shift()?.toLowerCase() ?? "";
+  const userId = message.author.id;
+  const now = Date.now();
 
-  const command =
-    commands.get(commandName) ||
-    commands.find((cmd) => cmd.aliases && cmd.aliases.includes(commandName));
-
-  if (!command) {
+  if (await isBlacklisted(userId, message.guild.id)) {
     return;
   }
 
-  try {
-    await command.execute(message, args);
-  } catch (error) {
-    console.error(`Error executing command ${commandName}:`, error);
-    message.reply("There was an error executing that command!");
+  if (!messageCache.has(userId)) {
+    messageCache.set(userId, []);
+  }
+
+  const userMessages = messageCache.get(userId);
+  userMessages.push({ content: message.content, timestamp: now });
+
+  messageCache.set(
+    userId,
+    userMessages.filter(
+      (msg: { timestamp: number }) => now - msg.timestamp < 10000
+    )
+  );
+
+  if (userMessages.length >= 5) {
+    const uniqueMessages = new Set(
+      userMessages.map((m: { content: any }) => m.content)
+    );
+
+    if (uniqueMessages.size <= 2) {
+      console.log(
+        `Auto-sender detected: ${message.author.tag} (${userId}) in ${message.guild.name}`
+      );
+
+      if (warnedUsers.has(userId)) {
+        console.log(
+          `Blacklisting ${message.author.tag} for continued auto-sending.`
+        );
+
+        await addBlacklist(userId, message.guild.id);
+        if (message.member) {
+          await message.member.timeout(
+            1 * 60 * 60 * 1000,
+            "Auto-sender detected"
+          );
+          await message.reply(
+            "🚨 **You have been blacklisted for auto-sending.**"
+          );
+        }
+        return;
+      }
+
+      warnedUsers.add(userId);
+      await message.reply(
+        "⚠ **Auto-sender detected!** Please slow down or you will be blacklisted in 15 seconds."
+      );
+
+      setTimeout(async () => {
+        if (messageCache.has(userId) && messageCache.get(userId).length >= 5) {
+          console.log(
+            `Blacklisting ${message.author.tag} for continued auto-sending.`
+          );
+          if (message.member) {
+            await message.member.timeout(
+              1 * 60 * 60 * 1000,
+              "Auto-sender detected"
+            );
+            await message.channel.send(
+              `🚨 **${message.author.tag} has been blacklisted for continued auto-sending.**`
+            );
+          }
+          await message.channel.send(
+            `🚨 **${message.author.tag} has been blacklisted for continued auto-sending.**`
+          );
+        }
+        warnedUsers.delete(userId);
+      }, 15000);
+    }
   }
 });
 
